@@ -68,7 +68,7 @@ function UserForm({
   }
   useEffect(() => {
     fetchData();
-  }, [baseCurrency]);
+  }, [baseCurrency, quoteCurrency]);
 
   function handleSubmit(e) {
     e.preventDefault();
