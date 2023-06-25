@@ -13,7 +13,7 @@ const currencies = [
   "EUR",
   "GBP",
   "HKD",
-  "HRK",
+
   "HUF",
   "IDR",
   "ILS",
@@ -36,6 +36,7 @@ const currencies = [
   "USD",
   "ZAR",
 ];
+
 function UserForm({
   baseCurrency,
   setBaseCurrency,
@@ -46,6 +47,7 @@ function UserForm({
   data,
   setData,
 }) {
+  const [isLoading, setIsLoading] = useState(false);
   function handleBaseCurrency(e) {
     setBaseCurrency(e.target.value);
   }
@@ -55,12 +57,14 @@ function UserForm({
   }
 
   async function fetchData() {
+    setIsLoading(true);
     try {
       const res = await fetch(
         `https://api.frankfurter.app/latest?from=${baseCurrency}&to=${quoteCurrency}`
       );
-      const data = await res.json();
 
+      const data = await res.json();
+      setIsLoading(false);
       setData(data);
     } catch (error) {
       console.log(error);
@@ -147,16 +151,20 @@ function UserForm({
         {data && (
           <div className="dataWrapper">
             <ul className="tradeDetails">
-              <li>Base Currency: {data.base}</li>
+              <li>Base Currency: {baseCurrency}</li>
               <li>Quote Currency: {quoteCurrency}</li>
               <li>Date: {data.date}</li>
               <li>Quantity: {quantity}</li>
               <li>Exchange Rate: {data.rates[quoteCurrency]}</li>
-              <li>
-                Total Exchange:{" "}
-                {quantity * data.rates[quoteCurrency]?.toFixed(4)}
-                {quoteCurrency}
-              </li>
+              {isLoading ? (
+                <>Loading...</>
+              ) : (
+                <li>
+                  Total Exchange:{" "}
+                  {quantity * data.rates[quoteCurrency]?.toFixed(4)}{" "}
+                  {quoteCurrency}
+                </li>
+              )}
             </ul>
           </div>
         )}
