@@ -1,10 +1,11 @@
-import { useEffect, useState, createRef } from "react";
+import { useEffect, useState, createRef, useRef } from "react";
 import { json, checkStatus } from "./fetchUtils";
 import Chart from "chart.js";
+
 function CurrencyTable({ baseCurrency, quoteCurrency }) {
   const [allPairs, setAllPairs] = useState("");
   const [rates, setRates] = useState(null);
-  const chartRef = createRef();
+  const chartRef = useRef();
 
   async function fetchTable() {
     try {
@@ -63,17 +64,24 @@ function CurrencyTable({ baseCurrency, quoteCurrency }) {
         const chartLabel = `${base}/${quote}`;
 
         buildChart(chartLabels, chartData, chartLabel);
+        console.log(chartData);
       })
       .catch((error) => console.log(error.message));
   };
 
   useEffect(() => {
     fetchTable();
+
     getHistoricalRates(baseCurrency, quoteCurrency);
+    const canvas = chartRef.current;
+    const context = canvas.getContext("2d");
   }, [baseCurrency, quoteCurrency]);
 
   return (
     <div className="wrapper">
+      <div className="section-center currency-chart">
+        <canvas ref={chartRef} />
+      </div>
       <div className="section-center rate-table">
         <p className="table-header">
           Rates for {baseCurrency} for {allPairs.date}
@@ -89,9 +97,6 @@ function CurrencyTable({ baseCurrency, quoteCurrency }) {
             })}
           </ul>
         )}
-      </div>
-      <div className="section-center currency-chart">
-        <canvas ref={chartRef} />
       </div>
     </div>
   );

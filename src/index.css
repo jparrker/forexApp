@@ -460,3 +460,7 @@ nav {
   padding: 2rem;
   overflow: hidden;
 }
+
+.section-center li {
+  font-size: 1rem;
+}
